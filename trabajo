@@ -1,0 +1,174 @@
+import json
+
+def guardar_datos(datos):
+    with open('datos.json', 'w') as archivo:
+        json.dump(datos, archivo)
+
+def cargar_datos():
+    try:
+        with open('datos.json', 'r') as archivo:
+            return json.load(archivo)
+    except FileNotFoundError:
+        return {}
+
+def mostrar_menu():
+    print("==== Menú ====")
+    print("1. Ingresar estudiante")
+    print("2. Modificar estudiante")
+    print("3. Buscar estudiante")
+    print("4. Eliminar estudiante")
+    print("5. Ingresar notas de estudiantes")
+    print("6. Listado de notas promedio por grado")
+    print("7. Excelencia por grado")
+    print("8. Excelencia del colegio")
+    print("9. Salir")
+
+
+def ingresar_estudiante(estudiantes):
+    basededatos = []
+    estudiante_id = srt(input("Ingrese el ID del estudiante: "))
+    nombre = input("Ingrese el nombre del estudiante: ")
+    sexo = input("Ingrese el sexo del estudiante: ")
+    grado = int(input("Ingrese el grado del estudiante: "))
+
+    estudiantes[estudiante_id] = {
+        "nombre": nombre,
+        "sexo": sexo,
+        "grado": grado,
+        "notas": []
+    }
+    basededatos.append(estudiantes)
+    guardar_datos(estudiantes)
+    with open("archivo.json", "a+") as archivo:
+        json.dump(basededatos, archivo)
+        print("Estudiantes guardados correctamente.\n")
+    print("Estudiante ingresado correctamente.")
+    input("Presione cualquier tecla para continuar ...")
+    
+    basededatos.append(estudiantes)
+    guardar_datos(estudiante_id)
+    with open("archivo.json", "a+") as archivo:
+        json.dump(Basededatos, archivo)
+        print("Estudiantes guardados correctamente.\n")
+    print("Estudiante ingresado correctamente.")
+    input("Presione cualquier tecla para continuar ...")
+# Función para modificar un estudiante
+def modificar_estudiante(estudiantes):
+    estudiante_id = input("Ingrese el ID del estudiante que desea modificar: ")
+
+    if estudiante_id in estudiantes:
+        print("Información actual del estudiante:")
+        print(estudiantes[estudiante_id])
+
+        nombre = input("Ingrese el nuevo nombre del estudiante: ")
+        sexo = input("Ingrese el nuevo sexo del estudiante: ")
+        grado = input("Ingrese el nuevo grado del estudiante: ")
+
+        estudiantes[estudiante_id]["nombre"] = nombre
+        estudiantes[estudiante_id]["sexo"] = sexo
+        estudiantes[estudiante_id]["grado"] = grado
+        
+        print("Estudiante modificado correctamente.")
+    else:
+        print("No se encontró un estudiante con el ID proporcionado.")
+
+def buscar_estudiante(estudiantes):
+    estudiante_id = input("Ingrese el ID del estudiante que desea buscar: ")
+
+    if estudiante_id in estudiantes:
+        print("Información del estudiante:")
+        print(estudiantes[estudiante_id])
+    else:
+        print("No se encontró un estudiante con el ID proporcionado.")
+
+
+def eliminar_estudiante(estudiantes):
+    estudiante_id = input("Ingrese el ID del estudiante que desea eliminar: ")
+
+    if estudiante_id in estudiantes:
+        del estudiantes[estudiante_id]
+        print("Estudiante eliminado correctamente.")
+    else:
+        print("No se encontró un estudiante con el ID proporcionado.")
+
+def ingresar_notas(estudiantes):
+    grado = input("Ingrese el grado del grupo: ")
+
+    if grado not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]:
+        print("Grado inválido.")
+        return
+
+    print(f"Ingrese las notas de los estudiantes del grado {grado}:")
+    for estudiante_id in estudiantes:
+        estudiante = estudiantes[estudiante_id]
+        if estudiante["grado"] == grado:
+            print(f"Estudiante: {estudiante['nombre']}")
+            cantidad_notas = int(input("Ingrese la cantidad de notas: "))
+            notas = []
+            for i in range(cantidad_notas):
+                nota = float(input(f"Ingrese la nota {i+1}: "))
+                notas.append(nota)
+            estudiante["notas"] = notas
+
+    print("Notas ingresadas correctamente.")
+
+def promedio_notas(notas):
+    if len(notas) > 0:
+        return sum(notas) / len(notas)
+    else:
+        return 0.0
+
+def listado_notas_promedio(estudiantes):
+    print("==== Listado de notas promedio por grado ====")
+    for grado in range(1, 12):
+        estudiantes_grado = [
+            estudiante
+            for estudiante in estudiantes.values()
+            if estudiante["grado"] == str(grado)
+        ]
+        if len(estudiantes_grado) > 0:
+            print(f"Grado {grado}:")
+            for estudiante in estudiantes_grado:
+                promedio = promedio_notas(estudiante["notas"])
+                print(f"ID: {estudiante['id']}, Nombre: {estudiante['nombre']}, Promedio: {promedio}")
+            print()
+
+def terna_excelencia_grado(estudiantes):
+    print("==== Excelencia por grado ====")
+    for grado in range(1, 12):
+        estudiantes_grado = [
+            estudiante
+            for estudiante in estudiantes.values()
+            if estudiante["grado"] == str(grado)
+        ]
+        if len(estudiantes_grado) > 0:
+            print(f"Grado {grado}:")
+            estudiantes_grado.sort(key=lambda est: promedio_notas(est["notas"]), reverse=True)
+            for estudiante in estudiantes_grado[:5]:
+                promedio = promedio_notas(estudiante["notas"])
+                print(f"Nombre: {estudiante['nombre']}, Promedio: {promedio}")
+            print()
+
+def terna_excelencia_colegio(estudiantes):
+    print("==== Excelencia del colegio ====")
+    estudiantes_colegio = list(estudiantes.values())
+    estudiantes_colegio.sort(key=lambda est: promedio_notas(est["notas"]), reverse=True)
+    for estudiante in estudiantes_colegio[:5]:
+        promedio = promedio_notas(estudiante["notas"])
+        print(f"Nombre: {estudiante['nombre']}, Grado: {estudiante['grado']}, Promedio: {promedio}")
+    print()
+
+
+estudiantes = cargar_datos()
+
+while True:
+    mostrar_menu()
+
+    opcion = input("Ingrese una opción: ")
+
+    if opcion == "1":
+        ingresar_estudiante(estudiantes)
+    elif opcion == "2":
+        modificar_estudiante(estudiantes)
+    elif opcion == "3":
+        break
