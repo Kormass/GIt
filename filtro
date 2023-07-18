@@ -1,0 +1,376 @@
+import json
+
+ruta = "lista1.json"
+
+def leerArchivo():
+    print("Se ha cerrado el archivo")
+    with open("lista.json", "a+") as archivo:
+        contenno_tarjetao = archivo.read()
+        return (contenno_tarjetao)
+nominacme = []
+agregarcliente = []
+
+def cargar_datos():
+    try:
+        with open('datos.json', 'r') as archivo:
+            return json.load(archivo)
+    except FileNotFoundError:
+        return {}
+    
+def mistarjetas():
+    print("\n---------------")
+    print(" Tarjetas Credito Acme: ")
+    print("----------------\n")
+    print("1.Agregar tarjeta ")
+    print("2.Modificar tarjetas ")
+    print("3.Buscar tarjetas ")
+    print("4.Eliminar tarjetas ")
+    print("5.Salir ")
+    print(">> Escoja una opcion (1-5)?")
+
+    elegirop = leerInt("\n>> Opcion (1 a 5)? ")
+    if elegirop < 1 or elegirop > 5:
+        msgError("Ingrese una opcion valno_tarjetaa")
+    return elegirop
+
+def cargarArch(ruta):
+    fd = open(ruta, "a+")
+
+    cont = 0
+    dicempl = {}
+    fd.seek(0)
+    for linea in fd:
+        cont += 1
+        if cont > 1:
+            lin = linea.rstrip()
+            lstempl = lin.split(";")
+            dicempl[lstempl[0]] = {}
+            dicempl[lstempl[0]]["nombre"] = lstempl[1]
+
+def cargarInfo(ruta, dic):
+    fd = open(ruta, "a+")
+    fd.seek(0)
+    
+    try:
+        json.load(fd, dic)
+    except Exception as e:
+        dic = {}
+    fd.close()
+    print(dic)
+
+def leerInt(msg):
+    while True:
+        try:
+            n = int(input(msg))
+            if n < 1:
+                print("Error! El codigo debe ser entero postivo.")
+                input("Digite cualquier tecla para continuar...")
+                continue
+            return n
+        except ValueError:
+            print("Error! Ingrese un numero valido")
+
+
+def msgError(msg):
+    print("----> ¡ERROR!" + msg)
+    input("---> Presione ENTER para continuar")
+
+
+def Agregar_tarjeta(ruta):
+    no_tarjeta = leerInt("Ingrese el no_tarjeta del cliente: \n")
+    nominacme[no_tarjeta] = {}
+    try:
+        typtarjeta = leerInt("Ingrese el tipo de tarjeta de el cliente: \n---1. Mastercard---\n---2. Rapicredito---\n---3. Bancolombia---\n Selecciona y presiona enter: ")
+        if typtarjeta == 1:
+            print("Has seleccionado Mastercard\n")
+            typtarjeta = "Mastercard"
+        elif typtarjeta == 2:
+            print("Has seleccionado Rapicredito\n")
+            typtarjeta = "Rapicredito"
+        elif typtarjeta == 3:
+            print("Has seleccionado Bancolombia\n")
+            typtarjeta = "Bancolombia"
+        elif typtarjeta != (1,2,3):
+            print("Has seleccionado una opcion invalida.")
+        nominacme[no_tarjeta]["typtarjeta"] = typtarjeta
+        año_vencimiento = leerInt("Ingrese año vencimiento: ")
+        nominacme[no_tarjeta]["año_vencimiento"] = año_vencimiento
+        while True:
+
+            if año_vencimiento < 2023 or año_vencimiento > 2080:
+                print("Su tarjeta a expirado")
+                break
+            else:
+                print(f"Su año de vencimiento es: {año_vencimiento}")
+            break
+        verificacion = leerInt("Ingrese el codigo de verificacion.")
+
+        nominacme[no_tarjeta]["verificacion de tarjeta"] = verificacion
+        if verificacion < 100 or verificacion > 999:
+            print("Seleccione un numero valido.")
+        nominacme.items()
+        idusuario = input("Ingrese el ID del usuario encargado de la tarjeta: ")
+        contenno_tarjeta = {
+            "typtarjeta":typtarjeta,
+            "no_tarjeta":no_tarjeta,
+            "año_vencimiento":año_vencimiento,
+            "verificacion": verificacion,
+            "idusuario": idusuario
+        }
+        
+        with open(ruta, "a+", encoding="utf-8") as archivo:
+            json.dump(contenno_tarjeta, archivo)
+        print("Tarjeta agregada exitosamente.")
+        print("Se ha guardado correctamente")
+        input("---> Presione ENTER para continuar")
+    except FileNotFoundError:
+        print("No se encontro el archivo")
+    
+
+def escribirMemDisco(ruta, dicempl):
+    fd = open(ruta, "w")
+    fd.write("no_tarjeta;NOMBRE;año_vencimiento;")
+
+    for no_tarjeta in dicempl.keys():
+        nombre = dicempl[no_tarjeta]["typtarjeta"]
+        año_vencimiento = dicempl[no_tarjeta]["año_vencimiento"]
+
+        lstempl = [no_tarjeta, nombre, str(año_vencimiento)]
+        strempl = "\n" + ";".join(lstempl)
+        fd.write(strempl)
+
+    fd.close()
+
+
+def Modificar_cuenta(ruta):
+    print("Modificar cliente: ")
+    print("----Seleccione el numero de lo que quiere modificar---- ")
+    modificar = input("\n 1.Modificar nombre \n 2.Modificar año_vencimiento \n 3.Modicar valor hora\n La opcion que deseas realizar es: ")
+    buscarno_tarjeta = leerInt("Ingrese el no_tarjeta del cliente que desea modificar: ")
+    if buscarno_tarjeta in nominacme.keys():
+        modificar = leerInt("ingrese la opcion que desea realizar: ")
+        if modificar == 1:
+            tarnueva = input("Ingrese el nuevo numero: ")
+            nominacme[buscarno_tarjeta]["typcliente"] = tarnueva
+            
+        elif modificar == 2:
+            nuevovenci = leerInt("Ingrese el nuevo año_vencimiento: ")
+            nominacme[buscarno_tarjeta]["año_vencimiento"] = nuevovenci
+            
+        elif modificar == 3:
+            verificacion = leerInt("Ingrese nuevo valor: ")
+            nominacme[buscarno_tarjeta]["verificacion"] = verificacion
+            
+        else:
+            print("Ingrese un numero valor no.tarjeta")
+    else:
+        ("no_tarjeta NO ENCONTRADO")
+        
+    escribirMemDisco(ruta, nominacme)
+    input("---> Presione ENTER para continuar")
+
+
+def Buscar_cliente(ruta):
+    while True:
+        buscarno_tarjeta = input("Ingrese el no_tarjeta del cliente que desea buscar: ")
+        if buscarno_tarjeta in nominacme.keys():
+            print("no_tarjeta ENCONTRADO")
+            no_tarjeta = nominacme[buscarno_tarjeta]["typtarjetas"]
+            año_vencimiento = nominacme[buscarno_tarjeta]["año_vencimiento"]
+            no_tarjeta = nominacme[buscarno_tarjeta]["no_tarjeta"]
+
+            print("-----cliente----")
+            print("Los datos del cliente son: ")
+            print(f"no_tarjeta cliente: {buscarno_tarjeta}")
+            print(f"Nombre cliente: {no_tarjeta}")
+            print(f"año_vencimiento: { año_vencimiento}")
+
+            print(nominacme)
+            break
+        else:
+            ("cliente no encontrado")
+    input("---> Presione ENTER para continuar")
+
+
+def Eliminar_cliente(ruta):
+    pass
+        
+
+def Listar_clientes():
+    contador = 4
+    indicador = 0
+    for cliente in nominacme.keys():
+        print("#"*40)
+        print("LISTA clienteS ")
+        print("#"*40)
+
+        no_tarjetaencontrado = cliente
+        nombre = nominacme[cliente]["nombre"]
+        año_vencimiento = nominacme[cliente]["año_vencimiento"]
+
+        print("-----cliente----")
+        print("Los datos del cliente son: ")
+        print(f"no_tarjeta cliente: {no_tarjetaencontrado}")
+        print(f"Nombre cliente: {nombre}")
+        print(f"año_vencimiento: { año_vencimiento}")
+        print(nominacme)
+
+        if indicador == contador:
+            print("Quieres ver otros 5 clientes? ")
+            print("Presiona 1 si deseas continuar o Presiona 2 si deseas salir")
+            opcion = int(input("OPCION: "))
+            if opcion == 1:
+                contador += 5
+                continue
+            elif opcion == 2:
+                break
+        indicador += 1
+    input("---> Presione ENTER para continuar")
+
+def cargarArch(ruta):
+    fd = open(ruta, "a+")
+
+    cont = 0
+    dicempl = {}
+    fd.seek(0)
+    for linea in fd:
+        cont += 1
+        if cont > 1:
+            lin = linea.rstrip()
+            lstempl = lin.split(";")
+            dicempl[lstempl[0]] = {}
+            dicempl[lstempl[0]]["typtarjeta"] = lstempl[1]
+            dicempl[lstempl[0]]["año_vencimiento"] = int(lstempl[2])
+            dicempl[lstempl[0]]["Valor hora"] = int(lstempl[3])
+
+    fd.close()
+
+    if cont < 2:
+        dicempl = {}
+
+    return dicempl
+
+
+while True:
+    nominacme = cargarArch(ruta)
+
+    elegirop = mistarjetas()
+
+    if elegirop == 1:
+        Agregar_tarjeta(ruta)
+    elif elegirop == 2:
+        Modificar_cuenta(ruta)
+    elif elegirop == 3:
+        Buscar_cliente(ruta)
+    elif elegirop == 4:
+        Eliminar_cliente(ruta)
+    elif elegirop == 5:
+        Listar_clientes(ruta)
+    elif elegirop == 6:
+        print("Se ha cerrado el programa")
+        break
+
+
+"""---------------VARIABLES QUE NO SE PUDIERON USAR POR PROBLEMA DE MOVIMIENTO DE LINEAS---------------------"""
+
+
+"""def main2(ruta):
+    while True:
+        nominacme = cargarArch(ruta)
+        elegirop1 = mistarjetas(ruta)
+        if elegirop1 == 1:
+            tarjetas()
+        elif elegirop1 == 2:
+            registrarse(ruta)
+        elif elegirop1 == 3:
+            break"""
+
+
+
+# Valno_tarjetaacion menu:
+"""while True:
+        nominacme = cargarArch(ruta)
+        elegirop2 = tarjetas()
+        if elegirop2 == 1:
+            inisiosesion()
+        elif elegirop2 == 2:
+            print("saliendo del programa")
+            break"""
+
+"""Trate de realizar una interfaz de usuario para configurar contraseña pero el debug me dice que el index es demaciado extenso entonces
+    no me deja realizarlo de la manera que yo queria."""
+
+
+
+
+"""while True:
+        buscarid = input("Ingrese el no_tarjeta del cliente que desea eliminar : ")
+        if buscarid in nominacme:
+            nominacme.pop(buscarid)
+            print(f"no_tarjeta")
+    while True:
+    nominacme = cargarArch(ruta)
+    elegirop = menu2()
+    if elegirop == 1:
+        menu3()
+    elif elegirop == 2:
+        print("saliendo del programa")
+        break ELIMINADO,se elimino el no_tarjeta : {buscarid}")
+            break
+        print("El no_tarjeta ingresado no existe ingrese de nuevo ")
+
+    escribirMemDisco(ruta, nominacme)
+    input("---> Presione ENTER para continuar")"""
+
+"""SE MOVIO EL CODIGO Y ME QUEDO SIN SERVIR UNA PARTE :D"""
+
+
+
+"""def registrarse(ruta):
+    usuario = input("Ingrese su nombre de usuario: ")
+    confirmar_usuario = input("Confirme el usuario: ")
+    while True:
+        if confirmar_usuario == usuario:
+            print("usuarios ingresados correctamente.")
+        elif confirmar_usuario != usuario:
+            print("Los usuarios no coinciden.")
+        contraseña = input("Ingrese su contraseña")
+        confirmar_contraseña= input("Confirme la contraseña")
+        if confirmar_contraseña == contraseña:
+            print("contraseñas ingresada correctamente.")
+        elif confirmar_contraseña != contraseña:
+            print("Las contraseñas no coinciden.")
+            break
+        
+        contenusuario = {
+            "usuario": usuario,
+            "contraseña": contraseña
+        }
+        with open(ruta, "a+") as archivo:
+            json.dump(contenusuario, archivo)"""
+
+"""def inisiosesion ():
+    print("\n---------------")
+    print(" Tarjetas Credito Acme: ")
+    print("----------------\n")
+    print("1. iniciar sesion")
+    print("2. registrarse")
+    print("3. salir")
+    elegirop = leerInt("\n>> Opcion (1 a 6)? ")
+    if elegirop < 1 or elegirop > 8:
+        msgError("Ingrese una opcion valno_tarjetaa")
+    return elegirop
+
+    
+
+def tarjetas ():
+    print("\n---------------")
+    print(" Tarjetas Credito Acme: ")
+    print("----------------\n")
+    print("1.Mis tarjetas")
+    print("2.Salir ")
+    elegirop2 = leerInt("\n>> Opcion (1 a 2)? ")
+    if elegirop2 < 1 or elegirop2 > 2:
+        msgError("Ingrese una opcion valno_tarjetaa")
+    return elegirop2
+"""
